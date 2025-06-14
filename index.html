@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Evasión de Clientes (Churn) - Telecom X</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .section-title {
+            position: relative;
+            padding-bottom: 0.5rem;
+            margin-bottom: 2rem; /* Aumenta el espacio debajo del título */
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100px; /* Ancho de la línea ligeramente más largo */
+            height: 5px; /* Línea más gruesa */
+            background-color: #6366f1; /* Color púrpura de Indigo 500 */
+            border-radius: 9999px; /* Bordes redondeados */
+        }
+        .card {
+            background-color: #ffffff; /* Blanco puro para las tarjetas */
+            padding: 1.5rem; /* p-6 */
+            border-radius: 0.75rem; /* rounded-xl */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            border: 1px solid #e5e7eb; /* Borde sutil */
+        }
+        .card:hover {
+            transform: translateY(-5px); /* Efecto de elevación al pasar el ratón */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Sombra más pronunciada */
+        }
+        .card-image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            border-radius: 0.75rem; /* rounded-xl */
+            background-color: #f9fafb; /* Ligeramente más claro que gray-100 */
+            padding: 1rem; /* Añade padding alrededor de la imagen */
+            border: 1px dashed #d1d5db; /* Borde punteado para las imágenes */
+        }
+        .card-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); /* Sombra suave para la imagen */
+        }
+        .insight-text {
+            font-style: italic;
+            color: #4b5563; /* gray-700 */
+            margin-top: 0.75rem;
+            padding-left: 1rem;
+            border-left: 4px solid #a78bfa; /* Borde púrpura para los insights */
+        }
+        .text-section-header {
+            color: #4f46e5; /* indigo-600 */
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-indigo-50 text-gray-800">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-indigo-700 to-indigo-900 text-white p-6 shadow-xl sticky top-0 z-50">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-4xl font-extrabold mb-4 md:mb-0 drop-shadow-lg">Telecom X</h1>
+            <nav>
+                <ul class="flex space-x-6 text-lg">
+                    <li><a href="#introduccion" class="hover:text-indigo-200 transition-colors duration-300 font-medium">Introducción</a></li>
+                    <li><a href="#etl" class="hover:text-indigo-200 transition-colors duration-300 font-medium">ETL</a></li>
+                    <li><a href="#eda" class="hover:text-indigo-200 transition-colors duration-300 font-medium">Análisis</a></li>
+                    <li><a href="#conclusiones" class="hover:text-indigo-200 transition-colors duration-300 font-medium">Conclusiones</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+
+        <!-- Introducción -->
+        <section id="introduccion" class="mb-20">
+            <h2 class="text-5xl font-extrabold text-gray-900 mb-8 section-title">Introducción: El Desafío de Telecom X</h2>
+            <p class="text-xl leading-relaxed mb-6 text-gray-700">
+                En el vibrante pero competitivo mundo de las telecomunicaciones, **Telecom X** se enfrentaba a un misterio creciente: sus clientes se estaban yendo, y nadie sabía exactamente por qué. Como el nuevo asistente de análisis de datos, mi misión era clara: desentrañar los factores detrás de esta **evasión de clientes (Churn)** y transformar montañas de datos en ideas claras y accionables.
+            </p>
+            <p class="text-xl leading-relaxed text-gray-700">
+                Este proyecto es la historia de cómo, paso a paso, iluminamos las razones detrás de la partida de los clientes, preparando el terreno para que Telecom X no solo entienda el problema, sino que lo resuelva. Nuestro objetivo final es dotar al equipo de Data Science con insights valiosos para desarrollar modelos predictivos robustos y estrategias de retención efectivas.
+            </p>
+        </section>
+
+        <!-- ETL Section -->
+        <section id="etl" class="mb-20">
+            <h2 class="text-5xl font-extrabold text-gray-900 mb-8 section-title">🚀 El Viaje de los Datos: Extracción, Transformación y Carga (ETL)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                <div class="card">
+                    <h3 class="text-3xl font-bold text-indigo-700 mb-4">Paso 1: Extracción</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Nuestra aventura comenzó en la **extracción de datos** directamente desde la API de Telecom X. Esta valiosa información, en formato JSON, fue rescatada utilizando Python y la biblioteca `requests`. Para asegurar que todos los detalles estuvieran a la vista, `pd.json_normalize()` aplanó las estructuras anidadas, organizando cada pieza de información en un claro DataFrame de Pandas. Este fue el primer gran paso para convertir datos crudos en un activo manejable.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3 class="text-3xl font-bold text-indigo-700 mb-4">Pasos 2-4 & 6: Transformación y Limpieza</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Esta fue la fase de **transformación**, donde los datos brutos se convirtieron en oro. Conocimos a fondo nuestras columnas, examinando tipos y buscando inconsistencias como valores nulos o errores de formato. Identificamos y eliminamos duplicados, rellenamos vacíos y corregimos tipos de datos para `account_Charges_Total` y `customer_tenure`. Nombres complejos se simplificaron (ej., `account.Charges.Monthly` a `account_Charges_Monthly`), y valores como "Sí"/"No" se convirtieron a 1/0. Unificamos términos como "No phone service" a "No" para una mayor coherencia y preparación para el análisis.
+                    </p>
+                </div>
+                <div class="card">
+                    <h3 class="text-3xl font-bold text-indigo-700 mb-4">Paso 5: Cuentas Diarias & Carga</h3>
+                    <p class="text-gray-700 leading-relaxed">
+                        Como parte vital de la transformación, creamos una nueva y reveladora columna: **`Cuentas_Diarias`**, calculada a partir de la facturación mensual. Esta métrica nos proporcionó una visión más granular del comportamiento de gasto. Finalmente, los datos limpios y transformados fueron "cargados" en un formato listo para el análisis, marcando el final de la fase ETL y el inicio de la exploración profunda. Este paso garantiza que los datos estén listos para contar su historia.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- EDA Section -->
+        <section id="eda" class="mb-20">
+            <h2 class="text-5xl font-extrabold text-gray-900 mb-8 section-title">🔍 El Corazón del Misterio: Análisis Exploratorio de Datos (EDA)</h2>
+
+            <!-- EDA - Distribución de Evasión (Paso 8) -->
+            <div class="card mb-12">
+                <h3 class="text-3xl font-bold text-indigo-700 mb-4">La Proporción de la Evasión (Paso 8)</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    El primer vistazo nos dio una imagen general: ¿cuántos clientes se estaban yendo? Esta visualización nos da la tasa base de churn, el porcentaje de clientes que deciden irse. Es nuestro punto de partida para entender la magnitud del problema en Telecom X.
+                </p>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_distribution.png" alt="Distribución de Evasión de Clientes (Churn)" class="card-image">
+                </div>
+                <p class="insight-text">
+                    **Insight:** Este gráfico fundamental nos muestra la distribución real entre clientes que permanecen y los que evaden, estableciendo la escala del desafío de retención.
+                </p>
+            </div>
+
+            <!-- EDA - Variables Numéricas (Paso 10) -->
+            <div class="card mb-12">
+                <h3 class="text-3xl font-bold text-indigo-700 mb-4">Las Variables Numéricas Hablan (Paso 10)</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Las cifras a menudo revelan tendencias sorprendentes. Nos enfocamos en variables como la antigüedad del cliente, los cargos mensuales y los cargos totales, ya que suelen ser grandes indicadores del comportamiento de churn.
+                </p>
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Antigüedad del Cliente (customer_tenure)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/tenure_churn_distribution.png" alt="Distribución de Antigüedad (customer.tenure) por Evasión" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** Los clientes con menor antigüedad (las barras de los primeros meses) muestran una propensión mucho mayor a evadir. Los primeros meses son críticos para la retención, sugiriendo que la experiencia inicial es clave.
+                </p>
+                
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Cargos Mensuales (account_Charges_Monthly)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/monthly_charges_churn_distribution.png" alt="Distribución de Cargos Mensuales (account.Charges.Monthly) por Evasión" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** Observamos que los clientes con cargos mensuales más altos, especialmente en ciertos rangos, tienden a evadir más. Esto podría sugerir una sensibilidad al precio o una percepción de menor valor por el costo en los planes más caros.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Cargos Totales (account_Charges_Total)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/total_charges_churn_distribution.png" alt="Distribución de Cargos Totales (account.Charges.Total) por Evasión" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** Al igual que con la antigüedad, los clientes con menores cargos totales acumulados son más propensos a la evasión, lo que refuerza la idea de que los clientes más "viejos" y con mayor gasto son más estables y satisfechos.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Cuentas Diarias (Cuentas_Diarias)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/daily_charges_churn_distribution.png" alt="Distribución de Cuentas Diarias por Evasión" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** La distribución de los cargos diarios refleja de cerca la de los cargos mensuales, proporcionando una visión más granular que confirma los patrones observados sobre la relación costo-evasión.
+                </p>
+            </div>
+
+            <!-- EDA - Variables Categóricas (Paso 9) -->
+            <div class="card mb-12">
+                <h3 class="text-3xl font-bold text-indigo-700 mb-4">Las Variables Categóricas Revelan Patrones (Paso 9)</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Las categorías de servicio, tipo de contrato y método de pago pintaron un cuadro claro de quiénes son los clientes en riesgo y dónde Telecom X puede enfocar sus esfuerzos.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Género (customer_gender)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_customergender.png" alt="Tasa de Evasión por customer_gender" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** El género no parece ser un factor determinante en la evasión, con tasas de churn muy similares entre hombres y mujeres, lo que sugiere que las estrategias de retención no necesitan ser diferenciadas por género.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Ciudadano Senior (customer_SeniorCitizen)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_customerSeniorCitizen.png" alt="Tasa de Evasión por customer_SeniorCitizen" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** Los clientes Senior (de edad avanzada) muestran una tasa de evasión ligeramente mayor, lo que podría sugerir necesidades específicas o una brecha en la adaptación de los servicios para este demográfico.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Socio (customer_Partner)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_customerPartner.png" alt="Tasa de Evasión por customer_Partner" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** Los clientes sin pareja (`No`) tienden a tener una tasa de evasión más alta. Esto podría indicar que la estabilidad del hogar y las responsabilidades compartidas influyen en la decisión de mantener el servicio.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Dependientes (customer_Dependents)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_customerDependents.png" alt="Tasa de Evasión por customer_Dependents" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** Similar a los socios, los clientes sin dependientes muestran una tasa de churn ligeramente más alta. Personas con mayores responsabilidades familiares podrían valorar más la estabilidad de sus servicios de telecomunicaciones.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Servicio de Internet (internet_InternetService)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_internetInternetService.png" alt="Tasa de Evasión por internet_InternetService" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** **¡Alerta Crítica!** Los clientes con **Fibra óptica** tienen la tasa de evasión más alta. A pesar de ser un servicio premium, esto sugiere problemas subyacentes como calidad de servicio insatisfactoria, altas expectativas no cumplidas o una mayor facilidad para migrar a la competencia. ¡Es una prioridad investigar a fondo este segmento!
+                </p>
+                
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Protección de Dispositivo (internet_DeviceProtection)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_internetDeviceProtection.png" alt="Tasa de Evasión por internet_DeviceProtection" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** Los clientes sin protección de dispositivo son más propensos a evadir. Esto subraya que la tranquilidad y la seguridad percibida son valores importantes para los clientes, y su ausencia puede llevar a la insatisfacción.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Tipo de Contrato (account_Contract)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_accountContract.png" alt="Tasa de Evasión por account_Contract" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** **¡Hallazgo Crucial!** Los clientes con contratos **"Month-to-month" (mes a mes)** tienen una tasa de evasión extraordinariamente alta (más del 40%). La falta de un compromiso a largo plazo los hace extremadamente volátiles.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Facturación Sin Papel (account_PaperlessBilling)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_accountPaperlessBilling.png" alt="Tasa de Evasión por account_PaperlessBilling" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** Los clientes con facturación sin papel muestran una tasa de evasión ligeramente más alta. Podría ser que este grupo sea más "digital" y, por lo tanto, más propenso a buscar y cambiar a alternativas en línea rápidamente.
+                </p>
+
+                <h4 class="text-xl font-semibold text-gray-700 text-section-header">Tasa de Evasión por Método de Pago (account_PaymentMethod)</h4>
+                <div class="card-image-container mb-4">
+                    <img src="Datos/churn_rate_by_accountPaymentMethod.png" alt="Tasa de Evasión por account_PaymentMethod" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** El "Cheque electrónico" tiene la tasa de evasión más alta. Esto podría indicar un perfil de cliente que tiene menos apego al proveedor o un proceso de cancelación más sencillo asociado a este método.
+                </p>
+
+                <!-- Matriz de Correlación (Paso 12 - Extra) -->
+                <h3 class="text-3xl font-bold text-indigo-700 mb-4">🔗 Análisis de Correlación entre Variables (Paso 12 - Extra)</h3>
+                <p class="text-gray-700 leading-relaxed mb-4">
+                    Finalmente, para entender cómo las variables numéricas se mueven juntas y su relación con la evasión, generamos una matriz de correlación. Esta visualización nos ofrece una visión rápida de las interdependencias en nuestros datos.
+                </p>
+                <div class="card-image-container mb-4">
+                    <!-- Asegúrate de que tu script Python genere y guarde esta imagen en Datos/correlation_matrix.png -->
+                    <img src="Datos/correlation_matrix.png" onerror="this.onerror=null;this.src='https://placehold.co/800x600/e0e7ff/3f51b5?text=Matriz+de+Correlacion+No+Disponible';" alt="Matriz de Correlación de Variables Numéricas" class="card-image">
+                </div>
+                <p class="insight-text mb-4">
+                    **Insight:** La matriz confirma visualmente las relaciones. Vemos una fuerte correlación negativa entre la antigüedad (`customer_tenure`) y el `Churn` (la evasión), lo que significa que cuanto más tiempo está un cliente, menos probable es que se vaya. Los cargos mensuales (`account_Charges_Monthly`) tienen una correlación positiva con `Churn`, mientras que los cargos totales (`account_Charges_Total`) tienen una correlación negativa, lo que refuerza los hallazgos de los histogramas.
+                </p>
+            </div>
+        </section>
+
+        <!-- Conclusiones y Recomendaciones -->
+        <section id="conclusiones" class="mb-16">
+            <h2 class="text-5xl font-extrabold text-gray-900 mb-8 section-title">💡 Conclusiones y Recomendaciones</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div class="card">
+                    <h3 class="text-3xl font-bold text-indigo-700 mb-4">Conclusiones Clave</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-3 leading-relaxed">
+                        <li>**Los Clientes Recientes son Vulnerables:** La mayor parte de la evasión ocurre en los primeros meses de servicio.</li>
+                        <li>**La Flexibilidad del Contrato, un Riesgo:** Los contratos mes a mes son el mayor factor de riesgo de churn.</li>
+                        <li>**Valor Añadido = Lealtad:** La ausencia de servicios de seguridad y soporte técnico impulsa significativamente la evasión.</li>
+                        <li>**Fibra Óptica: Calidad vs. Churn:** A pesar de ser un servicio premium, la fibra óptica muestra una preocupante alta tasa de evasión, lo que sugiere problemas subyacentes en este segmento.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 class="text-3xl font-bold text-indigo-700 mb-4">Recomendaciones Estratégicas</h3>
+                    <ul class="list-disc list-inside text-gray-700 space-y-3 leading-relaxed">
+                        <li>**Programa de Bienvenida Robusto:** Implementar un seguimiento proactivo y personalizado durante los primeros 6 meses de servicio.</li>
+                        <li>**Incentivos a Contratos a Largo Plazo:** Crear ofertas atractivas para motivar a los clientes de "mes a mes" a migrar a contratos de 1 o 2 años.</li>
+                        <li>**Venta Cruzada de Servicios Esenciales:** Promover activamente la adquisición de servicios como seguridad en línea, respaldo y soporte técnico, destacando sus beneficios clave.</li>
+                        <li>**Investigación de Calidad en Fibra Óptica:** Realizar un análisis profundo de los clientes de fibra óptica que evaden para identificar y corregir problemas de calidad o ajustar la competitividad de precios.</li>
+                        <li>**Análisis de Método de Pago:** Investigar el perfil y las razones de evasión de los clientes que utilizan "Cheque electrónico" para identificar posibles fricciones o oportunidades de mejora.</li>
+                    </ul>
+                </div>
+            </div>
+            <p class="text-xl leading-relaxed mt-12 text-center text-gray-600 font-semibold">
+                Este informe no es solo el fin de nuestro análisis, sino el inicio de una estrategia más inteligente y orientada a datos para que Telecom X no solo recupere, sino que retenga a sus valiosos clientes.
+            </p>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-indigo-800 to-indigo-900 text-white p-6 text-center text-sm shadow-inner">
+        <div class="container mx-auto">
+            &copy; 2024 Telecom X. Todos los derechos reservados.
+            <p class="mt-2 text-indigo-200">Desarrollado con datos y análisis para una mejor comprensión del cliente.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
