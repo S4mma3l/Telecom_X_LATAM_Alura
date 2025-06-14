@@ -124,3 +124,5 @@ Nuestro viaje a través de los datos de Telecom X ha revelado verdades fundament
 5.  **Análisis de Método de Pago:** Investigar el perfil y las razones de evasión de los clientes que utilizan "Cheque electrónico" como método de pago para identificar posibles puntos de fricción o insatisfacción.
 
 Este informe no es solo el fin de nuestro análisis, sino el inicio de una estrategia más inteligente y orientada a datos para que Telecom X no solo recupere, sino que retenga a sus valiosos clientes.
+
+Analisis creado por Angel Hernandez Morales (s4mma3l)
